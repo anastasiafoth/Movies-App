@@ -1,4 +1,11 @@
 from sqlalchemy import create_engine, text
+import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
 
 # Define the database URL
 DB_URL = "sqlite:///movies.db"
@@ -20,6 +27,18 @@ with engine.connect() as connection:
     connection.commit()
 
 
+def fetch_movie(title):
+    """Fetches data from API based on movie title"""
+    URL = f"http://www.omdbapi.com/?apikey={API_KEY}&t=" + title
+    res = requests.get(URL)
+    if res.ok:
+        result = res.json()
+    else:
+        result = {}
+
+    return result
+
+
 def list_movies():
     """Retrieve all movies from the database."""
     with engine.connect() as connection:
@@ -29,12 +48,19 @@ def list_movies():
     return {row[0]: {"title": row[1], "year": row[2], "rating": row[3]} for row in movies}
 
 
-def add_movie(title, year, rating):
+def add_movie(title):
     """Add a new movie to the database."""
+
+    result = fetch_movie(title)
+    title = result.get('Title')
+    year = result.get('Year')
+    rating = result.get('Ratings')[0].get('Value')
+    poster = result.get('Poster')
+
     with engine.connect() as connection:
         try:
-            connection.execute(text("INSERT INTO movies (title, year, rating) VALUES (:title, :year, :rating)"),
-                               {"title": title, "year": year, "rating": rating})
+            connection.execute(text("INSERT INTO movies (title, year, rating, poster_image_url) VALUES (:title, :year, :rating, :poster_image_url)"),
+                               {"title": title, "year": year, "rating": rating, "poster_image_url": poster})
             connection.commit()
 
         except Exception as e:

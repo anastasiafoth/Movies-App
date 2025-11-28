@@ -134,7 +134,7 @@ def add_movie(movies):
         Adds new movie with name and rating
         The first movie was created in 1895
     """
-    current_year = datetime.now().year
+    #current_year = datetime.now().year
     while True:
         movie_title = input(colorize("Enter new movie name: ","DARK_VIOLET")).strip()
         if movie_title in movies:
@@ -145,7 +145,7 @@ def add_movie(movies):
         else:
             break
 
-    try:
+    """try:
         movie_rating = float(
             input(colorize("Enter new movie rating (0-10): ", "DARK_VIOLET"))
         )
@@ -164,11 +164,11 @@ def add_movie(movies):
         print(colorize("Please enter a valid year in format YYYY.", "PINK"))
         return
 
-    if 0 <= movie_rating <= 10:
-        movie_storage_sql.add_movie(movie_title, movie_year, movie_rating)
-        print(f"The movie {movie_title} from {movie_year} and {movie_rating} rating was added.")
-    else:
-        print(colorize("Rating is out of range.", "PINK"))
+    if 0 <= movie_rating <= 10:"""
+    movie_storage_sql.add_movie(movie_title)
+    print(f"The movie {movie_title} was added.")
+    """else:
+        print(colorize("Rating is out of range.", "PINK"))"""
 
 
 def delete_movie(movies):
@@ -251,13 +251,17 @@ def update_movie(movies):
 
 
 def stats(movies):
+    """Shows average rating and median rating"""
+
     if not movies:
         print(colorize("No movies available!", "PINK"))
         return
 
     ratings = []
-    for name, data in movies.items():
-        ratings.append(data["rating"])
+
+    #rating is now showing as "8.7/10" so we have to get the pure rating
+    for id, data in movies.items():
+        ratings.append(float(data["rating"][:-3]))
 
     # Average rating
     average_rating = sum(ratings) / len(ratings)
@@ -394,8 +398,8 @@ def filter_movies(movies):
 
         if start_year <= end_year:
             print(f"Filtered Movies:")
-            for name, data in sorted(movies.items(), key=lambda x: x[1]["rating"], reverse=True):
-                if data["rating"] >= minimum_rating and start_year <= data["year"] <= end_year:
+            for id, data in sorted(movies.items(), key=lambda x: float(x[1]["rating"][:-3]), reverse=True):
+                if float(data["rating"][:-3]) >= minimum_rating and start_year <= data["year"] <= end_year:
                     print(f"{data["title"]} ({data["year"]}): {data["rating"]}")
         else:
             print()

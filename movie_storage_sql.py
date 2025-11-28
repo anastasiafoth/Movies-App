@@ -30,11 +30,26 @@ with engine.connect() as connection:
 def fetch_movie(title):
     """Fetches data from API based on movie title"""
     URL = f"http://www.omdbapi.com/?apikey={API_KEY}&t=" + title
-    res = requests.get(URL)
-    if res.ok:
-        result = res.json()
-    else:
-        result = {}
+
+    result = {}
+    try:
+        res = requests.get(URL)
+        if res.ok:
+            result = res.json()
+        else:
+            print("Movie not found in OMDb.")
+
+    except requests.exceptions.Timeout:
+            print("Error: The request to OMDb timed out.")
+            return {}
+
+    except requests.exceptions.ConnectionError:
+        print("Error: Cannot connect to the OMDb API (no internet or server unreachable).")
+        return {}
+
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error: {e}")
+        return {}
 
     return result
 
@@ -54,7 +69,11 @@ def add_movie(title):
     result = fetch_movie(title)
     title = result.get('Title')
     year = result.get('Year')
-    rating = result.get('Ratings')[0].get('Value')
+    rating = (
+    result.get("Ratings", [{}])[0].get("Value")
+    if result.get("Ratings")
+    else None
+)
     poster = result.get('Poster')
 
     with engine.connect() as connection:

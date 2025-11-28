@@ -3,6 +3,7 @@ import random
 from thefuzz import process
 import movie_storage_sql
 from datetime import datetime
+import movies_web_generator
 
 
 class Colors:
@@ -52,6 +53,7 @@ def title_screen():
         "Movies sorted by year",
         "Filter movies",
         "Create a rating histogram",
+        "Generate website"
     ]
 
     print(colorize("Menu:", "BLUE", "BOLD"))
@@ -68,15 +70,15 @@ def main():
     while True:
         title_screen()
         user_input = input(
-            colorize(f"Enter choice ({colorize("0-11", "BLUE")}): ").strip()
+            colorize(f"Enter choice ({colorize("0-12", "BLUE")}): ").strip()
         )
         if not user_input.isdigit():
             print(colorize("Please enter a number!", "PINK"))
             continue
         user_input = int(user_input)
 
-        if not (0 <= user_input <= 11):
-            print(colorize("Please enter a number between 0 and 11.", "PINK"))
+        if not (0 <= user_input <= 12):
+            print(colorize("Please enter a number between 0 and 12.", "PINK"))
             continue
 
         movies = movie_storage_sql.list_movies()
@@ -106,6 +108,8 @@ def main():
             filter_movies(movies)
         elif user_input == 11:
             create_rating_histogram(movies)
+        elif user_input == 12:
+            movies_web_generator.main(movies)
 
         input(f"\n{colorize("Press enter to continue", "BLUE", "BOLD")}")
 
@@ -134,7 +138,7 @@ def add_movie(movies):
         Adds new movie with name and rating
         The first movie was created in 1895
     """
-    #current_year = datetime.now().year
+
     while True:
         movie_title = input(colorize("Enter new movie name: ","DARK_VIOLET")).strip()
         if movie_title in movies:
@@ -145,30 +149,8 @@ def add_movie(movies):
         else:
             break
 
-    """try:
-        movie_rating = float(
-            input(colorize("Enter new movie rating (0-10): ", "DARK_VIOLET"))
-        )
-    except ValueError:
-        print("Please enter a number.")
-        return
-
-
-    try:
-        movie_year = int(input(colorize("Enter new movie year: ", "DARK_VIOLET")))
-    except ValueError:
-        print(colorize("Please enter a valid year.", "PINK"))
-        return
-
-    if not 1895 <= movie_year <= current_year:
-        print(colorize("Please enter a valid year in format YYYY.", "PINK"))
-        return
-
-    if 0 <= movie_rating <= 10:"""
     movie_storage_sql.add_movie(movie_title)
     print(f"The movie {movie_title} was added.")
-    """else:
-        print(colorize("Rating is out of range.", "PINK"))"""
 
 
 def delete_movie(movies):

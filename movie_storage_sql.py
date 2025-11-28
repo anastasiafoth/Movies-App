@@ -57,10 +57,10 @@ def fetch_movie(title):
 def list_movies():
     """Retrieve all movies from the database."""
     with engine.connect() as connection:
-        result = connection.execute(text("SELECT id, title, year, rating FROM movies"))
+        result = connection.execute(text("SELECT id, title, year, rating, poster_image_url FROM movies"))
         movies = result.fetchall()
 
-    return {row[0]: {"title": row[1], "year": row[2], "rating": row[3]} for row in movies}
+    return {row[0]: {"title": row[1], "year": row[2], "rating": row[3], "poster": row[4]} for row in movies}
 
 
 def add_movie(title):

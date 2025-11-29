@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import IntegrityError
 import requests
 from dotenv import load_dotenv
 import os
@@ -8,7 +9,7 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 
 # Define the database URL
-DB_URL = "sqlite:///movies.db"
+DB_URL = "sqlite:///data/movies.db"
 
 # Create the engine
 engine = create_engine(DB_URL, echo=True)
@@ -67,23 +68,38 @@ def add_movie(title):
     """Add a new movie to the database."""
 
     result = fetch_movie(title)
+
+    if not result or result.get("Response") == "False":
+        print(f"The movie '{title}' was not found.")
+        return
+
+    #Data
     title = result.get('Title')
     year = result.get('Year')
     rating = (
     result.get("Ratings", [{}])[0].get("Value")
     if result.get("Ratings")
     else None
-)
+    )
     poster = result.get('Poster')
 
     with engine.connect() as connection:
         try:
             connection.execute(text("INSERT INTO movies (title, year, rating, poster_image_url) VALUES (:title, :year, :rating, :poster_image_url)"),
-                               {"title": title, "year": year, "rating": rating, "poster_image_url": poster})
+                                {"title": title, "year": year, "rating": rating, "poster_image_url": poster})
             connection.commit()
 
+        except IntegrityError:
+            print(f"The movie '{title}' is already in the database.")
+            connection.rollback()
+            return
+
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Unexpected error: {e}")
+            connection.rollback()
+            return
+
+    print(f"The movie {title} was added.")
 
 
 def delete_movie(id):

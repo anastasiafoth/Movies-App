@@ -141,16 +141,17 @@ def add_movie(movies):
 
     while True:
         movie_title = input(colorize("Enter new movie name: ","DARK_VIOLET")).strip()
-        if movie_title in movies:
-            print("This movie already exists.")
+        for movie, data in movies.items():
+            if movie_title.lower().strip() == data["title"].lower().strip():
+                print(f"This movie already exists {data["title"]}.")
 
-        elif movie_title == "":
-            print("please enter a valid name.")
-        else:
-            break
+            elif not movie_title:
+                print("please enter a valid name.")
+                continue
+
+        break
 
     movie_storage_sql.add_movie(movie_title)
-    print(f"The movie {movie_title} was added.")
 
 
 def delete_movie(movies):

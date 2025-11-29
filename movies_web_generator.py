@@ -6,6 +6,7 @@ def serialize_movie(movies):
         title = data["title"]
         year = data["year"]
         poster = data["poster"]
+        rating = data["rating"]
 
         output += "<li>\n <div class='movie'>\n"
 
@@ -15,6 +16,8 @@ def serialize_movie(movies):
             output += f"<div class='movie-title'>{title}</div>\n"
         if year:
             output += f"<div class='movie-year'>{year}</div>\n"
+        if rating:
+            output += f"<div class='movie-rating'>Rating: {rating}</div>\n"
 
         output += '</div>\n </li>\n'
 

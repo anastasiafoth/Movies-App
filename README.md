@@ -29,7 +29,7 @@ A command-line application to manage your movie collection, featuring SQL databa
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/yourusername/movies-app.git](https://github.com/yourusername/movies-app.git)
+   git clone [https://github.com/anastasiafoth/Movies-App.git](https://github.com/anastasiafoth/Movies-App.git)
    cd movies-app
    
 2. Install dependencies:

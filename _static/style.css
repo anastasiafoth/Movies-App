@@ -36,6 +36,11 @@ body {
   text-align: center;
 }
 
+.movie-rating {
+  font-size: 0.7em;
+  text-align: center;
+}
+
 .movie-title {
   margin-top: 10px;
 }
@@ -44,6 +49,9 @@ body {
   color: #999;
 }
 
+.movie-rating {
+  color: #009B50;
+}
 
 .movie-poster {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

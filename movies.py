@@ -140,7 +140,8 @@ def add_movie(movies):
     """
 
     while True:
-        movie_title = input(colorize("Enter new movie name: ","DARK_VIOLET")).strip()
+        movie_title = input(colorize("Enter new movie name: ",
+                                     "DARK_VIOLET")).strip()
         for movie, data in movies.items():
             if movie_title.lower().strip() == data["title"].lower().strip():
                 print(f"This movie already exists {data["title"]}.")
@@ -171,7 +172,9 @@ def delete_movie(movies):
             match = process.extract(movie_to_delete, data.values(), limit=1)
 
             while True:
-                input_typo = input(colorize(f"The movie {movie_to_delete} does not exist. Did you mean: {match[0][0]} (yes|no)?: ", "PINK"))
+                input_typo = input(colorize(
+                    f"The movie {movie_to_delete} does not exist. "
+                    f"Did you mean: {match[0][0]} (yes|no)?: ", "PINK"))
                 if "y" in input_typo.lower():
                     movie_to_delete = match[0][0]
                     break
@@ -195,7 +198,8 @@ def update_movie(movies):
 
     while True:
         movie_to_update = input(
-            colorize("Enter movie name you would like to update: ", "DARK_VIOLET")
+            colorize("Enter movie name you would like to update: ",
+                     "DARK_VIOLET")
         )
         if movie_to_update == "":
             print("Please enter valid movie name.")
@@ -208,11 +212,15 @@ def update_movie(movies):
         match = process.extract(movie_to_update, data.values(), limit=1)
     if movie_to_update not in all_titles:
             input_typo = input(
-                colorize(f"The movie {movie_to_update} does not exist. Did you mean: {match[0][0]} (yes|no)?: ", "PINK"))
+                colorize(
+                    f"The movie {movie_to_update} does not exist. "
+                    f"Did you mean: {match[0][0]} (yes|no)?: ", "PINK"))
             if "y" in input_typo.lower():
                 movie_to_update = match[0][0]
     try:
-        new_rating = float(input(f"Current movie rating is: {data["rating"]}\nEnter new movie rating (0-10): "))
+        new_rating = float(input(
+            f"Current movie rating is: {data["rating"]}\n"
+            f"Enter new movie rating (0-10): "))
     except ValueError:
         print("Please enter a number")
         return
@@ -262,16 +270,20 @@ def stats(movies):
     # Best movie based on ratings
     best_rating = max(ratings)
 
+    # Prints all movies with the same best_rating
     for name, data in movies.items():
-        if data["rating"] == best_rating:  # Prints all movies with the same best_rating
-            print(f"Best movie: {data["title"]} ({data["year"]}), {best_rating:.1f}")
+        if data["rating"] == best_rating:
+            print(f"Best movie: {data["title"]} "
+                  f"({data["year"]}), {best_rating:.1f}")
 
     # Worst movie based on ratings
     worst_rating = min(ratings)
 
+    # Prints all movies with the same worst_rating
     for name, data in movies.items():
-        if data["rating"] == worst_rating:  # Prints all movies with the same worst_rating
-            print(f"Worst movie: {data["title"]} ({data["year"]}), {worst_rating:.1f}")
+        if data["rating"] == worst_rating:
+            print(f"Worst movie: {data["title"]} "
+                  f"({data["year"]}), {worst_rating:.1f}")
 
 
 def random_movie(movies):
@@ -282,7 +294,9 @@ def random_movie(movies):
 
     random_movie_choice = random.choice(list(movies.items()))
     print(
-        f"Your movie to watch: {random_movie_choice[1]["title"]}({random_movie_choice[1]["year"]}), with the rating: {random_movie_choice[1]["rating"]} "
+        f"Your movie to watch: {random_movie_choice[1]["title"]}"
+        f"({random_movie_choice[1]["year"]}), with the rating: "
+        f"{random_movie_choice[1]["rating"]} "
     )  # Getting the name and the matching rating
 
 
@@ -291,7 +305,8 @@ def search_for_movie(movies):
     #optionally let the user pick one to open/print details.
     while True:
         user_input_search_query = input(
-            colorize("Enter part of movie name: ", "DARK_VIOLET")
+            colorize("Enter part of movie name: ",
+                     "DARK_VIOLET")
         )
         if user_input_search_query == "":
             print("Please enter a valid movie name.")
@@ -302,34 +317,47 @@ def search_for_movie(movies):
     for id, data in movies.items():
         if user_input_search_query.lower() in data["title"].lower():
             found_movies.append(data["title"])
-            print(f"{data["title"]} ({data["year"]}), rating: {data["rating"]}")
+            print(f"{data["title"]} "
+                  f"({data["year"]}), "
+                  f"rating: {data["rating"]}")
 
     # Fuzzy search if no exact matches found
     if not found_movies:
-        print(colorize(f"The movie {user_input_search_query} does not exist.", "PINK"))
-        matches = process.extract(user_input_search_query, movies.keys(), limit=3)
+        print(colorize(
+            f"The movie {user_input_search_query} "
+            f"does not exist.", "PINK"))
+        matches = process.extract(user_input_search_query,
+                                  movies.keys(), limit=3)
 
         for match, score in matches:
             if score > 60:  # Similarity %
-                matched_movie = input(colorize(f"Did you mean: {match} (yes|no): ", "PINK"))
+                matched_movie = input(colorize(
+                    f"Did you mean: {match} (yes|no): ", "PINK"))
                 if "y" in  matched_movie.lower():
-                    print(f"{match} ({movies[match]["year"]}), rating: {movies[match]["rating"]}")
+                    print(f"{match} ({movies[match]["year"]}), "
+                          f"rating: {movies[match]["rating"]}")
 
 
 def sorted_movies_by_rating(movies):
     """Sorts movies by rating from top to flop"""
-    for name, data in sorted(movies.items(), key=lambda x: x[1]["rating"], reverse=True):
+    for name, data in sorted(movies.items(),
+                             key=lambda x: x[1]["rating"],
+                             reverse=True):
         print(f"{data["title"]} ({data["year"]}), {data["rating"]}")
 
 def sorted_movies_by_year(movies):
     """Sorts movies chronologically"""
     first_or_last = input("Do you want the latest movies first? (Yes/No): ")
     if "y" in first_or_last.lower():
-        for name, data in sorted(movies.items(), key=lambda x: x[1]["year"], reverse=True):
+        for name, data in sorted(movies.items(),
+                                 key=lambda x: x[1]["year"],
+                                 reverse=True):
             print(f"{data["title"]} ({data["year"]}), {data["rating"]}")
 
     elif "n" in first_or_last.lower():
-        for name, data in sorted(movies.items(), key=lambda x: x[1]["year"], reverse=False):
+        for name, data in sorted(movies.items(),
+                                 key=lambda x: x[1]["year"],
+                                 reverse=False):
             print(f"{data["title"]} ({data["year"]}): {data["rating"]}")
     else:
         print("No valid input was found.")
@@ -381,8 +409,11 @@ def filter_movies(movies):
 
         if start_year <= end_year:
             print(f"Filtered Movies:")
-            for id, data in sorted(movies.items(), key=lambda x: float(x[1]["rating"][:-3]), reverse=True):
-                if float(data["rating"][:-3]) >= minimum_rating and start_year <= data["year"] <= end_year:
+            for id, data in sorted(movies.items(),
+                                   key=lambda x: float(x[1]["rating"][:-3]),
+                                   reverse=True):
+                if (float(data["rating"][:-3]) >= minimum_rating
+                        and start_year <= data["year"] <= end_year):
                     print(f"{data["title"]} ({data["year"]}): {data["rating"]}")
         else:
             print()
@@ -391,8 +422,7 @@ def filter_movies(movies):
 
 def create_rating_histogram(movies):
     import matplotlib.pyplot as plt
-    #Consider lazy import of matplotlib inside the function; handle empty dataset;
-    # note that plt.show () blocks in some environments, saving alone might be sufficient.
+
     ratings = []
     if not movies:
         print(colorize("No movies available to create histogram.", "PINK"))
